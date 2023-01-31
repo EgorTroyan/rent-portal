@@ -23,6 +23,9 @@
         <label>
             <input th:type="text" th:name="username" th:value="${user.getUsername()}"/>
         </label>
+        <label>
+            <input type="email" th:name="email" th:value="${user.getEmail()}"/>
+        </label>
         <div th:each="role : ${roles}">
             <input type="checkbox" th:name="${role}" th:checked="${user.getRoles().contains(role)}" th:text="${role}">
             <!--            <p th:text="${role}"></p>-->

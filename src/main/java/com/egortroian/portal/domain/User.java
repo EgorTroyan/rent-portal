@@ -18,12 +18,16 @@ public class User implements UserDetails {
     private Long id;
 
     private String username;
+    private String email;
     private String password;
     private boolean active;
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+    public String getEmail() {
+        return email != null ? email : "<none>";
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -12,10 +12,16 @@
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/main">Messages</a>
+                        <a class="nav-link" href="/main">Routes</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
-                        <a class="nav-link" href="/user">List Users</a>
+                        <a class="nav-link" href="/user">List of Users</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+                        <a class="nav-link" href="/bike">List of Bikes</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+                        <a class="nav-link" href="/booking">Booking</a>
                     </li>
 
                 </ul>
@@ -27,7 +33,7 @@
             </div>
             <div class="navbar-text me-0" sec:authorize="isAuthenticated()">
                 <form th:action="@{/logout}" method="post">
-                    <button type="button" class="btn btn-primary">Sign Out</button>
+                    <button type="submit" class="btn btn-primary">Sign Out</button>
                 </form>
             </div>
         </div>
