@@ -14,6 +14,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/main">Routes</a>
                     </li>
+                    <li class="nav-item" sec:authorize="hasAuthority('ADMIN')||hasAuthority('AGENCY')">
+                        <a class="nav-link" href="/booking">Booking</a>
+                    </li>
                     <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
                         <a class="nav-link" href="/user">List of Users</a>
                     </li>
@@ -21,7 +24,7 @@
                         <a class="nav-link" href="/bike">List of Bikes</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
-                        <a class="nav-link" href="/booking">Booking</a>
+                        <a class="nav-link" href="/booking/all">List of Booking</a>
                     </li>
 
                 </ul>

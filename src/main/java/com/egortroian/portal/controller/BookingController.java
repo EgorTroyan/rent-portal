@@ -14,11 +14,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Controller
-@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAuthority('ADMIN') or hasAuthority('AGENCY')")
 @RequestMapping("/booking")
 public class BookingController {
     @Autowired
@@ -47,9 +50,9 @@ public class BookingController {
                         LocalDateTime.parse(endDate));
         log.info("Bookings" + bookings.toString());
         List<Long> ids = bookings.stream().map(b -> b.getBike().getId()).toList();
-        log.info("Bike id" + ids);
+        //log.info("Bike id" + ids);
         List<Bike> bikes = bikeRepo.findByIdNotIn(ids.isEmpty() ? List.of(-1L) : ids);
-        log.info("Bikes" + bikes);
+        //log.info("Bikes" + bikes);
 
         model.addAttribute("start", startDate);
         model.addAttribute("end", endDate);
@@ -58,16 +61,26 @@ public class BookingController {
     }
 
 
-//    @GetMapping("{booking}")
-//    public String bookingEditForm(@PathVariable Booking booking, Model model) {
-//        model.addAttribute("booking", booking);
-//        return "bookingEdit";
-//    }
+    @GetMapping("/all")
+    public String allBoooking(Model model) {
+        Iterable<Booking> it = StreamSupport.stream(bookingRepo.findAll().spliterator(), false)
+                .sorted(Comparator.comparing(Booking::getStartDate))
+                .collect(Collectors.toList());
+
+        model.addAttribute("bookings", it);
+        return "bookings";
+    }
+
+    @GetMapping("/edit/{booking}")
+    public String editBooking(@PathVariable Booking booking, Model model) {
+        model.addAttribute("booking", booking);
+        return "bookingEdit";
+    }
 
     @GetMapping("/del/{booking}")
     public String bookingDelete(@PathVariable Booking booking) {
         bookingRepo.deleteById(booking.getId());
-        return "redirect:/booking";
+        return "redirect:/booking/all";
     }
 
     @GetMapping("/{bike}")
@@ -76,6 +89,7 @@ public class BookingController {
                                  @RequestParam String endDate,
                                  Model model) {
         log.info(bike.toString());
+        log.info(startDate + " - " + endDate);
         model.addAttribute("start", startDate);
         model.addAttribute("end", endDate);
         model.addAttribute("bike", bike);
@@ -97,6 +111,23 @@ public class BookingController {
 
         bookingRepo.save(booking);
         return "redirect:/booking";
+    }
+
+    @PostMapping("/edit")
+    public String bookingEdit(@RequestParam("bookingId") Booking booking,
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam String email,
+            @RequestParam("bikeId") Bike bike
+    ) {
+
+        booking.setStartDate(LocalDateTime.parse(startDate));
+        booking.setEndDate(LocalDateTime.parse(endDate));
+        booking.setUser(userRepo.findByEmail(email).stream().findFirst().get());
+        booking.setBike(bike);
+
+        bookingRepo.save(booking);
+        return "redirect:/booking/all";
     }
 //    @PostMapping("{booking}")
 //    public String bookingEdit(
